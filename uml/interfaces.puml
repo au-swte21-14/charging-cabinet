@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+!include interfaces-header.puml
+
+interface IChargeControl {
+    +event EventHandler<> OnChargeStateChangedEvent
+    +bool Connected { get }
+    +ChargeState State { get }
+    +void StartCharge()
+    +void StopCharge()
+}
+
+interface IDoor {
+    +event EventHandler<> OnDoorChangedEvent
+    +bool DoorOpen { get }
+    +bool DoorLocked { get }
+    +void LockDoor()
+    +void UnlockDoor()
+    +void OnDoorOpen()
+    +void OnDoorClose()
+}
+
+interface IRfidReader {
+    +event EventHandler<> OnRfidDetectedEvent
+    +void OnRfidRead(int id)
+}
+
+interface IDisplay {
+    +void SetStationMessage(string msg)
+    +void SetChargingMessage(string msg)
+}
+
+interface ILogger {
+    +void WriteLine(string line)
+}
+
+@enduml

@@ -1,0 +1,15 @@
+@startuml
+
+!include usbsimulator-header.puml
+
+namespace UsbSimulator {
+    interface IUsbCharger {
+        +event EventHandler<> CurrentValueEvent
+        +double CurrentValue { get }
+        +bool Connected { get }
+        +void StartCharge()
+        +void StopCharge()
+    }
+}
+
+@enduml

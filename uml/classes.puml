@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class StationControl {
+    -LadeskabState _state
+    -IChargeControl _charger
+    -int _oldId
+    -IDoor _door
+    +StationControl(IDoor door, IRfidReader rfidReader, IChargeControl charger, IDisplay display, ILogger logger)
+    -void RfidDetected(int id)
+    -void onDoorChanged(ChangeTypeEnum change)
+}
+
+class ChargeControl {
+    +event EventHandler<> OnChargeStateChangedEvent
+    +bool Connected { get }
+    +ChargeState State { get }
+    +void StartCharge()
+    +void StopCharge()
+    
+    +ChargeControl(IUsbCharger usbCharger, IDisplay display)
+    -IUsbCharger _usbCharger
+    -IDisplay _display
+    -ILogger _logger
+    -ChargeState _state
+    -void OnCurrentChanged(double current)
+}
+
+class Door {
+    +event EventHandler<> OnDoorChangedEvent
+    +bool DoorOpen { get }
+    +bool DoorLocked { get }
+    +void LockDoor()
+    +void UnlockDoor()
+    +void OnDoorOpen()
+    +void OnDoorClose()
+    
+    -bool _doorOpen
+    -bool _doorLocked
+}
+
+class RfidReader {
+    +event EventHandler<> OnRfidDetectedEvent
+    +void OnRfidRead(int id)
+}
+
+class Display {
+    +string StationMessage
+    +string ChargingMessage
+}
+
+class Logger {
+    +void WriteLine(string line)
+}
+
+@enduml

@@ -1,0 +1,10 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface IChargeControl {}
+interface IDoor
+interface IRfidReader
+interface IDisplay
+interface ILogger
+
+@enduml

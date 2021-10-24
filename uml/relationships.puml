@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+!include usbsimulator.puml
+
+namespace Ladeskab {
+    !include classes-header.puml
+
+    namespace Interfaces {
+        !include interfaces-header.puml
+        IDoor <|-[dashed]- Ladeskab.Door
+        IRfidReader <|-[dashed]- Ladeskab.RfidReader
+        IChargeControl <|-[dashed]- Ladeskab.ChargeControl
+        IDisplay <|-[dashed]- Ladeskab.Display
+        ILogger <|-[dashed]- Ladeskab.Logger
+        
+        Ladeskab.ChargeControl o-- IDisplay
+        Ladeskab.StationControl o-- IDisplay
+        Ladeskab.StationControl o-- IDoor
+        Ladeskab.StationControl o-- IRfidReader
+        Ladeskab.StationControl o-- IChargeControl
+        Ladeskab.StationControl o-- ILogger
+    }
+}
+
+Ladeskab.StationControl o-- UsbSimulator.IUsbCharger
+
+@enduml

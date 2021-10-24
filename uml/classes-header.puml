@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ChargeControl
+class Door
+class RfidReader
+class Display
+class StationControl
+class Logger
+
+@enduml
