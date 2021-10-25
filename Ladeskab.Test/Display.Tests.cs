@@ -5,7 +5,7 @@ using Ladeskab.Interfaces;
 namespace Ladeskab.Unit.Test
 {
     [TestFixture]
-    public class Display_Tests
+    public class DisplayTests
     {
         private IDisplay _uut;
 
