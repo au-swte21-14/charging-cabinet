@@ -24,15 +24,20 @@ namespace Ladeskab
         private int _oldId;
         private readonly IDoor _door;
         private readonly IDisplay _display;
+        private readonly ILogger _logger;
 
         private string logFile = "logfile.txt"; // Navnet på systemets log-fil
 
         // Her mangler constructor
-        public StationControl(IDoor door, IChargeControl charger, IDisplay display)
+        public StationControl(IDoor door, IRfidReader rfidReader, IChargeControl charger, IDisplay display,
+            ILogger logger)
         {
             _charger = charger;
             _door = door;
             _display = display;
+            _logger = logger;
+            _door.OnDoorChangedEvent += (_, args) => OnDoorChanged(args.ChangeType);
+            rfidReader.OnRfidDetectedEvent += (_, args) => RfidDetected(args.Id);
         }
 
         // Eksempel på event handler for eventet "RFID Detected" fra tilstandsdiagrammet for klassen
@@ -90,5 +95,8 @@ namespace Ladeskab
         }
 
         // Her mangler de andre trigger handlere
+        private void OnDoorChanged(DoorChangedEventArgs.ChangeTypeEnum change)
+        {
+        }
     }
 }
