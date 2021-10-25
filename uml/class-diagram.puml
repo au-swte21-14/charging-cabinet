@@ -9,5 +9,6 @@ namespace Ladeskab {
 }
 
 !include relationships.puml
+!include usbsimulator.puml
 
 @enduml
