@@ -1,4 +1,5 @@
 ﻿using System;
+using Ladeskab.Interfaces;
 
 namespace Ladeskab
 {
@@ -7,6 +8,7 @@ namespace Ladeskab
         static void Main(string[] args)
         {
             // Assemble your system here from all the classes
+            IDoor door = new Door();
 
             bool finish = false;
             do
@@ -23,11 +25,11 @@ namespace Ladeskab
                         break;
 
                     case 'O':
-                        //door.OnDoorOpen();
+                        door.OnDoorOpen();
                         break;
 
                     case 'C':
-                        //door.OnDoorClose();
+                        door.OnDoorClose();
                         break;
 
                     case 'R':
