@@ -47,6 +47,8 @@ namespace Ladeskab.Unit.Test
         [Test]
         public void StationAvailableChargerNotConnected()
         {
+            _door.OnDoorOpen();
+            _door.OnDoorClose();
             _rfidReader.OnRfidRead(1);
             Assert.AreEqual("Din telefon er ikke ordentlig tilsluttet. Prøv igen.", _display.StationMessage);
             Assert.AreEqual("", _display.ChargingMessage);
