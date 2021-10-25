@@ -9,6 +9,7 @@ namespace Ladeskab
         {
             // Assemble your system here from all the classes
             IDoor door = new Door();
+            IRfidReader rfidReader = new RfidReader();
 
             bool finish = false;
             do
@@ -37,7 +38,7 @@ namespace Ladeskab
                         string idString = System.Console.ReadLine();
 
                         int id = Convert.ToInt32(idString);
-                        //rfidReader.OnRfidRead(id);
+                        rfidReader.OnRfidRead(id);
                         break;
 
                     default:
