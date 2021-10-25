@@ -26,8 +26,6 @@ namespace Ladeskab
         private readonly IDisplay _display;
         private readonly ILogger _logger;
 
-        private string logFile = "logfile.txt"; // Navnet på systemets log-fil
-
         // Her mangler constructor
         public StationControl(IDoor door, IRfidReader rfidReader, IChargeControl charger, IDisplay display,
             ILogger logger)
@@ -52,17 +50,14 @@ namespace Ladeskab
                         _door.LockDoor();
                         _charger.StartCharge();
                         _oldId = id;
-                        using (var writer = File.AppendText(logFile))
-                        {
-                            writer.WriteLine(DateTime.Now + ": Skab låst med RFID: {0}", id);
-                        }
-
-                        Console.WriteLine("Skabet er låst og din telefon lades. Brug dit RFID tag til at låse op.");
+                        _logger.WriteLine(DateTime.Now + ": Skab låst med RFID: {0}", id);
+                        _display.StationMessage =
+                            "Skabet er låst og din telefon lades. Brug dit RFID tag til at låse op.";
                         _state = LadeskabState.Locked;
                     }
                     else
                     {
-                        Console.WriteLine("Din telefon er ikke ordentlig tilsluttet. Prøv igen.");
+                        _display.StationMessage = "Din telefon er ikke ordentlig tilsluttet. Prøv igen.";
                     }
 
                     break;
@@ -77,17 +72,13 @@ namespace Ladeskab
                     {
                         _charger.StopCharge();
                         _door.UnlockDoor();
-                        using (var writer = File.AppendText(logFile))
-                        {
-                            writer.WriteLine(DateTime.Now + ": Skab låst op med RFID: {0}", id);
-                        }
-
-                        Console.WriteLine("Tag din telefon ud af skabet og luk døren");
+                        _logger.WriteLine(DateTime.Now + ": Skab låst op med RFID: {0}", id);
+                        _display.StationMessage = "Tag din telefon ud af skabet og luk døren.";
                         _state = LadeskabState.Available;
                     }
                     else
                     {
-                        Console.WriteLine("Forkert RFID tag");
+                        _display.StationMessage = "Forkert RFID tag";
                     }
 
                     break;
@@ -97,6 +88,10 @@ namespace Ladeskab
         // Her mangler de andre trigger handlere
         private void OnDoorChanged(DoorChangedEventArgs.ChangeTypeEnum change)
         {
+            if (_state == LadeskabState.Locked) return;
+
+            if (change == DoorChangedEventArgs.ChangeTypeEnum.DoorOpened) _state = LadeskabState.DoorOpen;
+            else if (change == DoorChangedEventArgs.ChangeTypeEnum.DoorClosed) _state = LadeskabState.Available;
         }
     }
 }
