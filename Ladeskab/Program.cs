@@ -1,5 +1,6 @@
 ﻿using System;
 using Ladeskab.Interfaces;
+using UsbSimulator;
 
 namespace Ladeskab
 {
@@ -10,7 +11,11 @@ namespace Ladeskab
             // Assemble your system here from all the classes
             IDoor door = new Door();
             IRfidReader rfidReader = new RfidReader();
-
+            IDisplay display = new Display();
+            IChargeControl chargeControl = new ChargeControl(new UsbChargerSimulator(), display);
+            ILogger logger = new Logger();
+            
+            var unused = new StationControl(door, rfidReader, chargeControl, display, logger);
             bool finish = false;
             do
             {
