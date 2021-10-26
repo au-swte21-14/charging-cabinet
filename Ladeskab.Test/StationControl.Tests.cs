@@ -45,12 +45,30 @@ namespace Ladeskab.Unit.Test
         }
         
         [Test]
+        public void StationOpen()
+        {
+            _door.OnDoorOpen();
+            Assert.AreEqual("Tilslut telefon", _display.StationMessage);
+            Assert.AreEqual("", _display.ChargingMessage);
+        }
+        
+        [Test]
+        public void StationClosed()
+        {
+            _door.OnDoorOpen();
+            _door.OnDoorClose();
+            Assert.AreEqual("Indlæs RFID", _display.StationMessage);
+            Assert.AreEqual("", _display.ChargingMessage);
+        }
+        
+        [Test]
         public void StationAvailableChargerNotConnected()
         {
             _door.OnDoorOpen();
             _door.OnDoorClose();
+            Assert.AreEqual("Indlæs RFID", _display.StationMessage);
             _rfidReader.OnRfidRead(1);
-            Assert.AreEqual("Din telefon er ikke ordentlig tilsluttet. Prøv igen.", _display.StationMessage);
+            Assert.AreEqual("Tilslutningsfejl", _display.StationMessage);
             Assert.AreEqual("", _display.ChargingMessage);
         }
         
@@ -59,7 +77,7 @@ namespace Ladeskab.Unit.Test
         {
             _usbCharger.Configure().Connected.Returns(true);
             _rfidReader.OnRfidRead(1);
-            Assert.AreEqual("Skabet er låst og din telefon lades. Brug dit RFID tag til at låse op.", _display.StationMessage);
+            Assert.AreEqual("Ladeskab optaget", _display.StationMessage);
             Assert.AreEqual("Lader...", _display.ChargingMessage);
             StringAssert.Contains("Skab låst med RFID", _logger.ReceivedCalls().Last().GetArguments().First().ToString());
         }
@@ -70,7 +88,7 @@ namespace Ladeskab.Unit.Test
             _usbCharger.Configure().Connected.Returns(true);
             _rfidReader.OnRfidRead(1);
             _rfidReader.OnRfidRead(1);
-            Assert.AreEqual("Tag din telefon ud af skabet og luk døren.", _display.StationMessage);
+            Assert.AreEqual("Fjern telefon", _display.StationMessage);
             Assert.AreEqual("", _display.ChargingMessage);
             StringAssert.Contains("Skab låst op med RFID", _logger.ReceivedCalls().Last().GetArguments().First().ToString());
         }
@@ -84,13 +102,12 @@ namespace Ladeskab.Unit.Test
             Assert.AreEqual("Forkert RFID tag", _display.StationMessage);
             Assert.AreEqual("Lader...", _display.ChargingMessage);
         }
-        
+
         [Test]
-        public void StationOpen()
+        public void StationOpenTryRfid()
         {
             _door.OnDoorOpen();
             _rfidReader.OnRfidRead(1);
-            Assert.AreEqual("", _display.StationMessage);
             Assert.AreEqual("", _display.ChargingMessage);
         }
     }

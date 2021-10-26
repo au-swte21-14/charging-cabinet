@@ -1,10 +1,108 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 
+actor Bruger as user
+participant Door as door
+participant StationControl as station
+participant Display as display
+participant ChargeControl as charge
+participant UsbCharger as charger
+participant RfidReader as rfid
+participant Logger as logger
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+user -> door: OnDoorOpen()
+activate door
+door -> door: DoorOpen = true
+door -> station: OnDoorChangedEvent(DoorOpened)
+deactivate door
+activate station
+station -> station: _state = DoorOpen
+station -> display: StationMessage = "Tilslut telefon"
+deactivate station
+activate display
+display -> display: update()
+deactivate display
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+user -> charger: Connected = true
+
+user -> door: onDoorClose()
+activate door
+door -> door: DoorOpen = false
+door -> station: OnDoorChangedEvent(DoorClosed)
+deactivate door
+activate station
+station -> station: _state = Available
+station -> display: StationMessage = "Indlæs RFID"
+deactivate station
+activate display
+display -> display: update()
+deactivate display
+
+loop Indtil telefon er tilsluttet
+    user -> rfid: OnRfidRead(id)
+    activate rfid
+    rfid -> station: OnRfidDetectedEvent(id)
+    deactivate rfid
+    activate station
+    station -> charge: Connected
+    activate charge
+    charge --> station: false
+    station -> display: StationMessage = "Tilslutningsfejl"
+    activate display
+    display -> display: update()
+    deactivate display
+end
+
+charge --> station: true
+deactivate charge
+station -> door: LockDoor()
+station -> charge: StartCharge()
+activate charge
+charge -> charger: StartCharge()
+deactivate charge
+activate charger
+charger -> charge: CurrentValueEvent(current)
+deactivate charger
+activate charge
+charge -> display: ChargingMessage = "Lader..."
+deactivate charge
+activate display
+display -> display: update()
+deactivate display
+station -> logger: WriteLine("<Dato>: Skab låst med RFID: <id>")
+station -> display: StationMessage = "Ladeskab optaget"
+activate display
+display -> display: update()
+deactivate display
+station -> station: _state = Locked
+deactivate station
+
+loop Indtil RFID tag er rigtigt
+    user -> rfid: OnRfidRead(id)
+    activate rfid
+    rfid -> station: OnRfidDetectedEvent(id)
+    deactivate rfid
+    activate station
+    station -> display: StationMessage = "Forkert RFID tag"
+    activate display
+    display -> display: update()
+    deactivate display
+end
+
+station -> charge: StopCharge()
+charge -> charger: StopCharge()
+charger -> charge: CurrentValueEvent(0)
+charge -> display: ChargingMessage = ""
+activate display
+display -> display: update()
+deactivate display
+station -> door: UnlockDoor()
+station -> logger: WriteLine("<Dato>: Skab låst op med RFID: <id>")
+station -> display: StationMessage = "Fjern telefon"
+activate display
+display -> display: update()
+deactivate display
+station -> station: _state = Available
+deactivate station
+
 @enduml

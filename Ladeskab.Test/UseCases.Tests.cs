@@ -48,8 +48,10 @@ namespace Ladeskab.Unit.Test
         public void UseCase1()
         {
             _door.OnDoorOpen(); // Brugeren åbner lågen på ladeskabet
+            Assert.AreEqual("Tilslut telefon", _display.StationMessage);
             _usbCharger.Configure().Connected.Returns(true); // Brugeren tilkobler sin mobiltelefon til ladekablet.
             _door.OnDoorClose(); // Brugeren lukker lågen på ladeskabet.
+            Assert.AreEqual("Indlæs RFID", _display.StationMessage);
             _rfidReader.OnRfidRead(1); // Brugeren holder sit RFID tag op til systemets RFID-læser.
             StringAssert.Contains("Skab låst med RFID", _logger.ReceivedCalls().Last().GetArguments().First().ToString());
 

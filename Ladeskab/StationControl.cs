@@ -51,13 +51,12 @@ namespace Ladeskab
                         _charger.StartCharge();
                         _oldId = id;
                         _logger.WriteLine(DateTime.Now + ": Skab låst med RFID: {0}", id);
-                        _display.StationMessage =
-                            "Skabet er låst og din telefon lades. Brug dit RFID tag til at låse op.";
+                        _display.StationMessage = "Ladeskab optaget";
                         _state = LadeskabState.Locked;
                     }
                     else
                     {
-                        _display.StationMessage = "Din telefon er ikke ordentlig tilsluttet. Prøv igen.";
+                        _display.StationMessage = "Tilslutningsfejl";
                     }
 
                     break;
@@ -73,7 +72,7 @@ namespace Ladeskab
                         _charger.StopCharge();
                         _door.UnlockDoor();
                         _logger.WriteLine(DateTime.Now + ": Skab låst op med RFID: {0}", id);
-                        _display.StationMessage = "Tag din telefon ud af skabet og luk døren.";
+                        _display.StationMessage = "Fjern telefon";
                         _state = LadeskabState.Available;
                     }
                     else
@@ -90,8 +89,16 @@ namespace Ladeskab
         {
             if (_state == LadeskabState.Locked) return;
 
-            if (change == DoorChangedEventArgs.ChangeTypeEnum.DoorOpened) _state = LadeskabState.DoorOpen;
-            else if (change == DoorChangedEventArgs.ChangeTypeEnum.DoorClosed) _state = LadeskabState.Available;
+            if (change == DoorChangedEventArgs.ChangeTypeEnum.DoorOpened)
+            {
+                _state = LadeskabState.DoorOpen;
+                _display.StationMessage = "Tilslut telefon";
+            }
+            else if (change == DoorChangedEventArgs.ChangeTypeEnum.DoorClosed)
+            {
+                _state = LadeskabState.Available;
+                _display.StationMessage = "Indlæs RFID";
+            }
         }
     }
 }
