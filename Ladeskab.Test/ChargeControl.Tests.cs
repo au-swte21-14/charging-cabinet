@@ -27,10 +27,10 @@ namespace Ladeskab.Unit.Test
             // When charging starts, fake 498 + 500 mA and send a event
             _usbCharger.When(x => x.StartCharge()).Do(_ =>
             {
-                _usbCharger.Configure().CurrentValue.Returns(500);
+                _usbCharger.Configure().CurrentValue.Returns(498);
                 _usbCharger.CurrentValueEvent += Raise.EventWith(_usbCharger,
                     new CurrentEventArgs {Current = _usbCharger.CurrentValue});
-                _usbCharger.Configure().CurrentValue.Returns(498);
+                _usbCharger.Configure().CurrentValue.Returns(500);
                 _usbCharger.CurrentValueEvent += Raise.EventWith(_usbCharger,
                     new CurrentEventArgs {Current = _usbCharger.CurrentValue});
             });
