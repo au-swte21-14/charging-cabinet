@@ -23,6 +23,7 @@ activate display
 display -> display: update()
 deactivate display
 
+
 user -> charger: Connected = true
 
 user -> door: onDoorClose()
@@ -89,9 +90,14 @@ loop Indtil RFID tag er rigtigt
     deactivate display
 end
 
+
 station -> charge: StopCharge()
+activate charge
 charge -> charger: StopCharge()
+deactivate charge
+activate charger
 charger -> charge: CurrentValueEvent(0)
+deactivate charger
 charge -> display: ChargingMessage = ""
 activate display
 display -> display: update()
